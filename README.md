@@ -26,7 +26,9 @@ Open <http://localhost:8000> in a modern browser. Keep the server running while 
 - Play fishing, mining, or timber memory games for extra resources. Gathering equipment increases active rewards.
 - Equip an expedition, wait for its return, and collect its supplies.
 
-Progress saves in this browser's local storage, with up to eight hours of offline production. Saves are specific to the browser and site origin; there are no accounts or cloud saves. To reset, remove the `hearthwater-v1` local storage entry through your browser's developer tools. The original save key is retained from the prototype's working title for compatibility.
+Progress saves in this browser's local storage, with up to eight hours of offline production. **Saves & account** offers portable JSON download/import and optional Google sign-in with hidden Drive cloud saves. Google connection requires a registered OAuth client ID in `dist/config.js`; it is not enabled by default. Visible Drive exports request additional permission only when used.
+
+Saves are local to the browser and site origin until cloud storage is connected. To reset local progress, remove the `hearthwater-v1` entry through your browser's developer tools. The original save key is retained for compatibility.
 
 ## Source
 
@@ -35,11 +37,18 @@ dist/
   index.html   Settlement scene, building controls, and dialog shell
   style.css    Responsive interface and visual styling
   game.js      Economy, upgrades, gathering games, expeditions, and saves
+  config.js    Optional public Google OAuth client ID
+  platform/    Identity, authorization, storage adapters, save service, and menu
 docs/
   game-concept.md
+  save-architecture.md
+tests/
+  saves.test.js
 ```
 
-The prototype uses plain HTML, CSS, JavaScript, and inline SVG. Typography optionally loads from Google Fonts, with local font fallbacks. There are no API keys, backend services, or runtime dependencies. For static hosting, publish the contents of `dist/`.
+The prototype uses plain HTML, CSS, JavaScript modules, and inline SVG. Typography optionally loads from Google Fonts, with local font fallbacks. No build step, backend, or package installation is required. When Google is configured, its Identity Services SDK is loaded from Google. For static hosting, publish `dist/` and ensure JavaScript files are served with a JavaScript MIME type.
+
+See [save architecture and Google setup](docs/save-architecture.md) for provider contracts, OAuth registration, save conflict behavior, and how to add other identity or storage providers.
 
 ## Prototype scope
 
@@ -51,4 +60,5 @@ JavaScript syntax can be checked with Node.js:
 
 ```sh
 node --check dist/game.js
+npm test
 ```

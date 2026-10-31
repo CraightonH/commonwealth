@@ -1,8 +1,15 @@
+import { createPlatform } from './platform/index.js';
+import { installSaveMenu } from './platform/save-menu.js';
 const $=s=>document.querySelector(s);
 const types={fish:{name:'Fishing village',icon:'⚓',resource:'food',desc:'Canvas sails on quiet water. Your fishing villages keep every corner of this little world fed.',base:12},wood:{name:'Lumber camp',icon:'♧',resource:'timber',desc:'Among the pines, a steady rhythm of saws. Timber turns your next idea into a place on the map.',base:8},ore:{name:'Mining outpost',icon:'◇',resource:'ore',desc:'Beyond the tree line, something glints in the rock. Ore becomes better tools for every settlement.',base:5}};
 const initial=()=>({v:1,res:{food:140,timber:100,ore:30},levels:{fish:1,wood:1,ore:0},tools:0,active:0,exp:null,last:Date.now(),log:[{text:'You arrived at Commonwealth. A fishing village and lumber camp are already at work.',time:Date.now()}]});
-let state=initial(),storageOK=true;try{const saved=JSON.parse(localStorage.getItem('hearthwater-v1'));if(saved&&saved.v===1&&saved.res&&saved.levels&&Number.isFinite(saved.last)&&Object.values(saved.res).every(Number.isFinite))state=saved;}catch(e){storageOK=false;}
+const platform=createPlatform({onStatus:status=>{
+  $('#saved').textContent=status.provider ? status.blocked ? '○ Cloud sync needs attention' : status.lastSyncedAt ? '● Saved on this device & Drive' : '● Saved locally · Cloud connected' : status.localOK ? '● Saved on this device' : '○ Device save unavailable';
+  if(!status.localOK) $('#saved').textContent='○ Device save unavailable';
+}});
+let state=platform.saves.load(initial());
 let selected='fish',round=null,toastTimer,modalTimer;
+const escapeHTML=text=>String(text).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const fmt=n=>Math.floor(n).toLocaleString();
 const rate=k=>types[k].base*state.levels[k]*Math.pow(1.35,state.tools);
 const costs=k=>{let n=state.levels[k];return k==='fish'?{timber:Math.ceil(35*Math.pow(1.65,n)),ore:Math.ceil(5*Math.pow(1.5,n))}:k==='wood'?{food:Math.ceil(45*Math.pow(1.65,n)),ore:Math.ceil(4*Math.pow(1.5,n))}:{food:Math.ceil(65*Math.pow(1.65,n)),timber:Math.ceil(50*Math.pow(1.65,n))};};
@@ -12,8 +19,8 @@ const can=c=>Object.entries(c).every(([k,n])=>state.res[k]>=n);
 const pay=c=>{if(!can(c))return false;for(const[k,n]of Object.entries(c))state.res[k]-=n;return true;};
 const costText=c=>Object.entries(c).map(([k,n])=>`${fmt(n)} ${k}`).join(' · ');
 function notify(t){$('#toast').textContent=t;$('#toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').classList.remove('show'),3500);}
-function save(){try{localStorage.setItem('hearthwater-v1',JSON.stringify(state));}catch(e){storageOK=false;}$('#saved').textContent=storageOK?'● Saved on this device':'○ Saving unavailable in this browser';}
-function record(text){state.log.unshift({text,time:Date.now()});state.log=state.log.slice(0,30);save();}
+function save(){platform.saves.save(state);}
+function record(text){state.log.unshift({text,time:Date.now()});state.log=state.log.slice(0,30);save();platform.saves.sync().catch(error=>notify(error.message));}
 function tick(){const now=Date.now(),elapsed=Math.max(0,Math.min((now-state.last)/60000,480));for(const[k,t]of Object.entries(types))state.res[t.resource]+=rate(k)*elapsed;state.last=now;if(state.exp&&now>=state.exp.end&&!state.exp.ready){state.exp.ready=true;record('Your expedition returned. Visit the camp to collect its discoveries.');notify('Your expedition has returned!');}renderResources();updateButtons();}
 function renderResources(){$('#resources').innerHTML=Object.entries(types).map(([k,t])=>`<div class="resource"><span class="icon">${t.icon}</span><label>${t.resource}</label><strong>${fmt(state.res[t.resource])}<em>+${rate(k).toFixed(1)}/min</em></strong></div>`).join('')+`<div class="resource"><span class="icon">⌂</span><label>Settlements</label><strong>${Object.values(state.levels).reduce((a,b)=>a+b,0)}<em>growing together</em></strong></div>`;for(const k of Object.keys(types))$('#'+k+'level').textContent=state.levels[k]?`${state.levels[k]} SETTLEMENT${state.levels[k]>1?'S':''} · +${rate(k).toFixed(0)}/MIN`:'ESTABLISH AN OUTPOST';$('#expstatus').textContent=state.exp?(state.exp.ready?'READY TO COLLECT':`RETURNS IN ${Math.ceil((state.exp.end-Date.now())/1000)}s`):'THE HILLS ARE CALLING';}
 function updateButtons(){document.querySelectorAll('[data-cost]').forEach(b=>b.disabled=!can(JSON.parse(b.dataset.cost)));const e=$('#expcount');if(e&&state.exp)e.textContent=state.exp.ready?'Your party has returned.':`Exploring the hills · ${Math.max(0,Math.ceil((state.exp.end-Date.now())/1000))} seconds remaining`;const claim=$('#claim');if(claim)claim.disabled=!state.exp?.ready;}
@@ -27,5 +34,8 @@ function startRound(kind){tick();if(!state.levels[kind])return;round={kind,basel
 document.querySelectorAll('[data-place]').forEach(b=>b.onclick=()=>select(b.dataset.place,true));
 $('.close').onclick=()=>$('#modal').close();$('#modal').addEventListener('close',()=>{clearInterval(modalTimer);round=null;});
 $('#help').onclick=()=>openModal(`<div class="eyebrow">WELCOME TO COMMONWEALTH</div><h2>A little at a time.</h2><p>Tap a building on the map to manage it. Your settlements gather food, timber, and ore into one shared stockpile—even while you’re away, for up to eight hours.</p><p>Establish more settlements to increase production. Visit the workshop for tools that improve the whole economy, or equipment that improves active gathering.</p><p>Play a gathering game when you want a boost. Send an expedition when you have supplies to spare.</p><div class="hint">This first sketch uses short rounds and a one-minute expedition so you can try the loop. Progress saves in this browser.</div>`);
-$('#journal').onclick=()=>openModal(`<div class="eyebrow">YOUR STORY SO FAR</div><h2>Settlement journal</h2>${state.log.map(l=>`<div class="journalrow">${l.text}<small>${new Date(l.time).toLocaleString()}</small></div>`).join('')}`);
+$('#journal').onclick=()=>openModal(`<div class="eyebrow">YOUR STORY SO FAR</div><h2>Settlement journal</h2>${state.log.map(l=>`<div class="journalrow">${escapeHTML(l.text)}<small>${new Date(l.time).toLocaleString()}</small></div>`).join('')}`);
 const away=Date.now()-state.last;tick();select('fish');save();if(away>60000)notify(`Welcome home. Your settlements worked for ${Math.floor(Math.min(away/60000,480))} minutes.`);setInterval(tick,1000);setInterval(save,5000);document.addEventListener('visibilitychange',()=>{tick();save();});window.addEventListener('pagehide',save);
+
+installSaveMenu({platform,readState:()=>{tick();return state;},replaceState:next=>{state=next;tick();save();renderPanel();},openModal,notify});
+setInterval(()=>platform.saves.sync().catch(error=>notify(error.message)),30000);
