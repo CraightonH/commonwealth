@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Commonwealth — A little world, growing</title><meta name="description" content="A playable settlement idle game prototype. Build a connected economy, fish by hand, and send expeditions into the hills."><link rel="stylesheet" href="style.css"></head>
+<body>
+<header><a class="brand" href="#"><span class="crest">♧</span> COMMONWEALTH <small>A LITTLE WORLD, GROWING</small></a><div class="saved" id="saved">● Saved on this device</div><button class="quiet" id="help">How to play ↗</button></header>
+<div class="resourcebar" id="resources" aria-label="Shared resources"></div>
+<main>
+<section class="world">
+<div class="worldhead"><div><div class="eyebrow">THE FIRST CHAPTER</div><h1>A place to call home.</h1><p>Small beginnings. A world of possibility.</p></div><span class="season">☀ EARLY SUMMER</span></div>
+<div class="map" aria-label="Settlement map">
+<svg viewBox="0 0 1000 680" role="img" aria-label="An illustrated coastal settlement with a fishing dock, forest camp, workshop, and distant mountains">
+<defs>
+<linearGradient id="land" x2="0" y2="1"><stop stop-color="#c7cf9b"/><stop offset="1" stop-color="#a8b785"/></linearGradient>
+<linearGradient id="sea" x2="1" y2="1"><stop stop-color="#8fb9b2"/><stop offset="1" stop-color="#4e929b"/></linearGradient>
+<pattern id="waves" width="90" height="40" patternUnits="userSpaceOnUse"><path d="M10 20q12 7 24 0m28 12q10 5 20 0" fill="none" stroke="#d9e8ce" opacity=".35" stroke-width="2"/></pattern>
+<filter id="shadow"><feDropShadow dx="0" dy="7" stdDeviation="4" flood-color="#344a31" flood-opacity=".2"/></filter>
+<g id="pine"><ellipse cy="12" rx="20" ry="7" fill="#526849" opacity=".18"/><path d="M-3 12V-30h6v42" fill="#6c6149"/><path d="M0-88l-23 42h10l-19 26h13l-20 23q39 14 78 0L19-20h13L13-46h10Z" fill="#426a52"/><path d="M0-88v98q18-1 39-7L19-20h13L13-46h10Z" fill="#315541" opacity=".5"/></g>
+<g id="house"><path d="M-37 4l39 19 38-19V-42l-38-18-39 18Z" fill="#e8dbad"/><path d="M2-60v83L40 4v-46Z" fill="#baad82"/><path d="M-46-40l47-46 48 46-47 24Z" fill="#9b6450"/><path d="M1-86l48 46-47 24Z" fill="#7d5040"/><path d="M-21-10v22l15 7V-3Z" fill="#715f44"/><path d="M16-16v12l12-6v-12Z" fill="#536c61"/><path d="M21-68v-28l9-4 8 4v44" fill="#a69b78"/></g>
+<g id="rock"><path d="M-34 8l9-31 31-18 30 27 8 23-40 12Z" fill="#8b9588"/><path d="M6-41l-5 46 43 4-8-23Z" fill="#707c73"/><path d="M-25-23L1 5l5-46" fill="#a9afa0"/></g>
+<g id="boat"><ellipse rx="39" ry="13" fill="#d6e3cf" opacity=".3"/><path d="M-35-7q36 10 70 0L20 8q-20 13-43-1Z" fill="#735944"/><path d="M0-12v-72" stroke="#705e46" stroke-width="4"/><path d="M-3-69l-27 47H-3Z" fill="#f1e5bf"/><path d="M4-69l23 42H4Z" fill="#d9cea6"/></g>
+</defs>
+<rect width="1000" height="680" fill="#dce0bb"/>
+<path d="M0 135L100 60l70 40L270 6l109 122L484 49l112 83 119-110 126 112 70-63 89 46v179H0Z" fill="#b0bda1"/>
+<path d="M210 116L270 6l109 122-91-45-28-30-16 44ZM651 99l64-77 126 112-87-51-34-30-24 42Z" fill="#e6e6cb"/>
+<path d="M0 231Q190 128 356 193T693 163T1000 211V680H0Z" fill="url(#land)"/>
+<path d="M0 354Q141 315 273 410T390 680H0Z" fill="#dcd2a3"/>
+<path d="M0 374Q139 335 249 429T358 680H0Z" fill="url(#sea)"/>
+<path d="M0 374Q139 335 249 429T358 680H0Z" fill="url(#waves)"/>
+<path d="M374 680q44-152 182-226t246-180" fill="none" stroke="#c7b887" stroke-width="35"/>
+<path d="M335 452q144-91 219 2m0 0q-31-151-80-171m80 171q169 55 258 13" fill="none" stroke="#d4c596" stroke-width="26"/>
+<g opacity=".55" fill="#80986c"><ellipse cx="499" cy="328" rx="94" ry="24"/><ellipse cx="807" cy="476" rx="118" ry="29"/><ellipse cx="695" cy="257" rx="79" ry="20"/></g>
+<g filter="url(#shadow)"><use href="#pine" x="43" y="265"/><use href="#pine" x="83" y="286"/><use href="#pine" x="128" y="247"/><use href="#pine" x="175" y="289"/><use href="#pine" x="208" y="250"/><use href="#pine" x="73" y="332"/><use href="#pine" x="253" y="299"/><use href="#pine" x="303" y="259"/><use href="#pine" x="340" y="299"/><use href="#pine" x="225" y="341"/></g>
+<g transform="translate(470 302)" filter="url(#shadow)"><use href="#house"/><path d="M-52 16l58 29 58-27" fill="none" stroke="#826d49" stroke-width="5"/><path d="M-52 16v-20M6 45V24m58-6V-4" stroke="#826d49" stroke-width="4"/><path d="M-28 38l48 22m-34-29 48 22" stroke="#725e43" stroke-width="10"/></g>
+<g transform="translate(344 439)" filter="url(#shadow)"><use href="#house"/><path d="M-34 27l-94 50 16 12 95-50Z" fill="#967c50"/><path d="M-108 59l15 13m2-20 15 13m2-20 15 13m2-20 15 13" stroke="#c1a36c" stroke-width="3"/><path d="M-121 77v25m89-73v24" stroke="#6d6147" stroke-width="5"/></g>
+<use href="#boat" x="177" y="497"/><use href="#boat" x="92" y="598" transform="rotate(-12 92 598)"/>
+<g transform="translate(632 422)" filter="url(#shadow)"><use href="#house"/><use href="#house" transform="translate(58 -32) scale(.8)"/><path d="M-15-58v-48l15-8 15 8v61" fill="#9d9070"/><path d="M-17-106l17-8 17 8-17 8Z" fill="#c3b899"/><circle cx="-6" cy="-125" r="10" fill="#ece7cf" opacity=".45"/><circle cx="-14" cy="-147" r="15" fill="#ece7cf" opacity=".25"/></g>
+<g transform="translate(807 473)" filter="url(#shadow)"><path d="M-52 15L0-62l53 77Z" fill="#d4b67c"/><path d="M0-62L8 15h45Z" fill="#a68553"/><path d="M-7-8L-22 15H8Z" fill="#5b6248"/><path d="M0-64v-30l27 9-27 9" fill="#a95e44" stroke="#786044" stroke-width="3"/><circle cx="-54" cy="40" r="15" fill="#8b7654"/><path d="M-62 43l16-16m-17 2 17 16" stroke="#d5a062" stroke-width="4"/></g>
+<g transform="translate(782 246)"><use href="#rock"/><use href="#rock" x="51" y="12"/><path d="M-10 12V-22q21-32 42 0v34" fill="#475c4b"/><path d="M-15 14v-43h51v43" fill="none" stroke="#8b7753" stroke-width="8"/></g>
+<g filter="url(#shadow)"><use href="#pine" x="914" y="292"/><use href="#pine" x="953" y="336"/><use href="#pine" x="905" y="371"/><use href="#pine" x="946" y="569"/><use href="#pine" x="899" y="615"/><use href="#pine" x="580" y="612"/><use href="#pine" x="631" y="646"/></g>
+<g fill="#e8dfb7"><circle cx="444" cy="453" r="5"/><circle cx="547" cy="501" r="5"/><circle cx="709" cy="453" r="5"/></g><g stroke="#665c40" stroke-width="5"><path d="M444 458v12m103 36v12m162-60v12"/></g>
+<g fill="#edf0d5" opacity=".65"><path d="M58 109q9-9 18 0 9-9 18 0-18-4-18 3Z"/><path d="M540 90q9-9 18 0 9-9 18 0-18-4-18 3Z"/></g>
+</svg>
+<button class="hotspot" style="left:33%;top:70%" data-place="fish"><span>⚓</span> Fishing village <small id="fishlevel"></small></button>
+<button class="hotspot" style="left:47%;top:48%" data-place="wood"><span>♧</span> Lumber camp <small id="woodlevel"></small></button>
+<button class="hotspot" style="left:64%;top:67%" data-place="tools"><span>⚒</span> Workshop <small>TOOLS & UPGRADES</small></button>
+<button class="hotspot" style="left:79%;top:39%" data-place="ore"><span>◇</span> Mining outpost <small id="orelevel"></small></button>
+<button class="hotspot" style="left:81%;top:80%" data-place="expedition"><span>⚑</span> Expedition camp <small id="expstatus">THE HILLS ARE CALLING</small></button>
+<div class="mapnote">✧ Select a building to step inside</div>
+</div>
+<div class="worldfoot"><span><i></i> Your settlements are at work</span><span>One shared economy. Many little beginnings.</span></div>
+</section>
+<aside id="panel" aria-label="Selected building"></aside>
+</main>
+<footer><span>COMMONWEALTH <b>•</b> A playable first sketch</span><button class="quiet" id="journal">Settlement journal ↗</button></footer>
+<dialog id="modal"><button class="close" aria-label="Close dialog">×</button><div id="modalbody"></div></dialog><div id="toast" role="status"></div>
+<script src="game.js"></script></body></html>
